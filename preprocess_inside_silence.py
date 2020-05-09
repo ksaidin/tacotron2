@@ -16,9 +16,8 @@ def energy(samples):
 
 def remove_inside_silence_audio(input_filename, cut_minimum_duration, replace_duration, chunk_size, silence_threshold, output_dir, dry_run):
     print input_filename
-    #read audio file and cut into chunks
     output_filename_prefix = os.path.splitext(os.path.basename(input_filename))[0]
-    
+    #read audio file and cut into chunks
     sample_rate, samples = input_data=wavfile.read(filename=input_filename, mmap=True)
     step_size = int(chunk_size * sample_rate)
     signal_windows = windows(signal=samples, step_size=step_size)
@@ -40,26 +39,24 @@ def remove_inside_silence_audio(input_filename, cut_minimum_duration, replace_du
     for i, isHighEnergy in enumerate(window_silence):
         if i<2:
             continue
-        if not isHighEnergy and not window_silence[i-1] and  not window_silence[i-2]:
+        if not isHighEnergy and not window_silence[i-1] and not window_silence[i-2]:
             are_we_counting = True
             if count_started==0:
                 count_started = i-2
         if isHighEnergy and window_silence[i-1] and window_silence[i-2]:
-            if are_we_counting and cut_minimum_duration<(i-2-count_started)*chunk_size:
+            if are_we_counting and cut_minimum_duration<=(i-2-count_started)*chunk_size:
                 cut_slices.append([count_started, i])
                 #You play with this slice points a bit.
             are_we_counting = False
             count_started = 0
     
     #Appending the last part        
-    if are_we_counting and cut_minimum_duration<(i-2-count_started)*chunk_size:
+    if are_we_counting and cut_minimum_duration<=(i-2-count_started)*chunk_size:
         cut_slices.append([count_started, -1])
     elif len(cut_slices)>0:
         cut_slices.append([-1, -1])
-        
-        
+       
     final_sample = None
-    
     start_point = 0
     next_start_point = 0
     if len(cut_slices)>0 and cut_slices[0][0]==0:
