@@ -59,8 +59,6 @@ def remove_inside_silence_audio(input_filename, cut_minimum_duration, replace_du
     final_sample = None
     start_point = 0
     next_start_point = 0
-    if len(cut_slices)>0 and cut_slices[0][0]==0:
-       start_point = cut_slices[0][1]
         
     for i, entity in enumerate(cut_slices):
         if entity[0]==0:
